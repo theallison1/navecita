@@ -269,7 +269,9 @@ function reiniciar() {
   tiempoDestruccion = 0;
   tiempoInicial = millis();
   destruirNave = false;
+  
   restartButton.hide();
+  botonCreditos.hide();
 }
 
 function handleMovement() {
@@ -309,6 +311,19 @@ function manejarProyectiles() {
       noStroke();
       ellipse(p.x, p.y, 10, 10);
     }
+
+    for (let j = meteoritos.length - 1; j >= 0; j--) {
+      let meteor = meteoritos[j];
+      let distX = p.x - (meteor.x + 30);
+      let distY = p.y - (meteor.y + 30);
+      let distancia = sqrt(distX * distX + distY * distY);
+
+      if (distancia < 30) {
+        proyectiles.splice(i, 1);
+        meteoritos.splice(j, 1);
+        break;
+      }
+    }
   }
 }
 
@@ -347,6 +362,10 @@ function keyPressed() {
   if (keyCode === LEFT_ARROW) izquierda = true;
   if (keyCode === UP_ARROW) arriba = true;
   if (keyCode === DOWN_ARROW) abajo = true;
+
+  if (key === ' ') {
+    disparar();
+  }
 }
 
 function keyReleased() {
@@ -354,4 +373,22 @@ function keyReleased() {
   if (keyCode === LEFT_ARROW) izquierda = false;
   if (keyCode === UP_ARROW) arriba = false;
   if (keyCode === DOWN_ARROW) abajo = false;
+}
+
+function disparar() {
+  proyectiles.push({ x: px + naveWidth / 2, y: py });
+}
+
+function touchStarted() {
+  if (mouseX < px) izquierda = true;
+  if (mouseX > px + naveWidth) derecha = true;
+  if (mouseY < py) arriba = true;
+  if (mouseY > py + naveWidth) abajo = true;
+}
+
+function touchEnded() {
+  izquierda = false;
+  derecha = false;
+  arriba = false;
+  abajo = false;
 }
