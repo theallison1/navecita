@@ -28,11 +28,21 @@ let arriba = false;
 let abajo = false;
 let xmin = 0, xmax, ymin = 0, ymax;
 
+// Sonidos
+let sonidoDisparo;
+let sonidoColision;
+let sonidoGameOver;
+
 function preload() {
   fondoEspacio = loadImage('imagenes/fondo.jpeg');
   naveEspacial = loadImage('imagenes/navesita.png');
   meteorito = loadImage('imagenes/meteorito.png');
   vidasIcono = loadImage('imagenes/navesita.png');
+
+  // Cargar los sonidos
+  sonidoDisparo = loadSound('/disparo.mp3');
+  sonidoColision = loadSound('/explosion.mp3');
+  sonidoGameOver = loadSound('/gameOver.mp3');
 }
 
 function setup() {
@@ -321,6 +331,9 @@ function manejarProyectiles() {
       if (distancia < 30) {
         proyectiles.splice(i, 1);
         meteoritos.splice(j, 1);
+        if (sonidoColision.isLoaded()) {
+          sonidoColision.play();  // Reproducir sonido de colisión
+        }
         break;
       }
     }
@@ -340,11 +353,17 @@ function checkCollisions() {
       if (vida > 0) {
         vida--;
         destruirNave = true;
+        if (sonidoColision.isLoaded()) {
+          sonidoColision.play();  // Reproducir sonido de colisión
+        }
         break;
       }
 
       if (vida <= 0) {
         gameOver = true;
+        if (sonidoGameOver.isLoaded()) {
+          sonidoGameOver.play();  // Reproducir sonido de Game Over
+        }
       }
     }
   }
@@ -362,10 +381,7 @@ function keyPressed() {
   if (keyCode === LEFT_ARROW) izquierda = true;
   if (keyCode === UP_ARROW) arriba = true;
   if (keyCode === DOWN_ARROW) abajo = true;
-
-  if (key === ' ') {
-    disparar();
-  }
+  if (key === ' ') disparar();
 }
 
 function keyReleased() {
@@ -376,19 +392,8 @@ function keyReleased() {
 }
 
 function disparar() {
+  if (sonidoDisparo.isLoaded()) {
+    sonidoDisparo.play();  // Reproducir sonido de disparo
+  }
   proyectiles.push({ x: px + naveWidth / 2, y: py });
-}
-
-function touchStarted() {
-  if (mouseX < px) izquierda = true;
-  if (mouseX > px + naveWidth) derecha = true;
-  if (mouseY < py) arriba = true;
-  if (mouseY > py + naveWidth) abajo = true;
-}
-
-function touchEnded() {
-  izquierda = false;
-  derecha = false;
-  arriba = false;
-  abajo = false;
 }
